@@ -1,10 +1,9 @@
 "use client";
 
 import TransactionList from "@/app/components/TransactionList";
-import { addTransaction } from "@/app/api/route";
 import { useState, useEffect } from "react";
-import { fetchTransactions } from "@/app/api/route";
 import { Transaction } from "@/app/type";
+import { fetchTransactions, addTransaction, deleteTransaction } from "@/app/lib/transactions";
 import {
   Card,
   CardHeader,
@@ -12,7 +11,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { deleteTransaction } from "@/app/api/route";
+
 
 export default function HomePage() {
   const [type, setType] = useState<"income" | "expense">("income");
