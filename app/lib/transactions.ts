@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic'
 import  { Transaction } from "@/app/type";
-const API_URL = 'http://localhost:8080/transactions';
+const API_URL = 'https://expense-app-production-d2a4.up.railway.app';
 
 export const fetchTransactions = async (): Promise<Transaction[]> => {
   const response = await fetch(API_URL);
