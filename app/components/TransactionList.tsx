@@ -58,6 +58,9 @@ const TransactionList: React.FC<TransactionListProps> = ({
                 {expandedIndex === index && (
                   <div className="p-4 bg-white flex flex-col gap-2">
                     <p>
+                      <strong>Category:</strong> {txn.category}
+                    </p>
+                    <p>
                       <strong>Type:</strong> {txn.type}
                     </p>
                     <p>

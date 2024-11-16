@@ -24,6 +24,18 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   setDescription,
   handleSubmit,
 }) => {
+  // Define category options
+  const categoryOptions = [
+    { value: "salary", label: "Salary" },
+    { value: "rent", label: "Rent" },
+    { value: "groceries", label: "Groceries" },
+    { value: "transport", label: "Transport" },
+    { value: "entertainment", label: "Entertainment" },
+    { value: "utilities", label: "Utilities" },
+    { value: "healthcare", label: "Healthcare" },
+    { value: "other", label: "Other" },
+  ];
+
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       <div>
@@ -39,12 +51,19 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       </div>
       <div>
         <label className="block text-gray-700 font-medium">Category:</label>
-        <input
+        <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           className="w-full border-gray-300 rounded-md shadow-sm p-2 text-sm"
           required
-        />
+        >
+          <option value="">Select a category</option>
+          {categoryOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
       </div>
       <div>
         <label className="block text-gray-700 font-medium">Amount:</label>
@@ -58,7 +77,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           required
         />
       </div>
-     
       <div>
         <label className="block text-gray-700 font-medium">Description:</label>
         <input
