@@ -14,58 +14,71 @@ interface TxnChartProps {
 }
 
 const TxnDetailedChart: React.FC<TxnChartProps> = ({ transactions }) => {
-  let cumulativeIncome = 0;
-  let cumulativeExpense = 0;
+  const COLORS_INCOME = ["#28a745", "#20c997", "#1e7e34", "#2e8b57"]; // Shades of green for income categories
+  const COLORS_EXPENSE = ["#dc3545", "#e4606d", "#c82333", "#f86c6b"]; // Shades of red for expense categories
 
-  // Calculate cumulative income and expense
+  // Group data by categories for income and expense
+  const groupedData: { name: string; value: number; type: string }[] = [];
+
   transactions.forEach((txn) => {
-    if (txn.type === "income") {
-      cumulativeIncome += txn.amount;
-    } else if (txn.type === "expense") {
-      cumulativeExpense += txn.amount;
+    const existingIndex = groupedData.findIndex(
+      (entry) => entry.name === txn.category && entry.type === txn.type
+    );
+    if (existingIndex > -1) {
+      groupedData[existingIndex].value += txn.amount;
+    } else {
+      groupedData.push({
+        name: txn.category,
+        value: txn.amount,
+        type: txn.type,
+      });
     }
   });
 
-  // Data for the Pie Chart
-  const data = [
-    { name: "Income", value: cumulativeIncome },
-    { name: "Expense", value: cumulativeExpense },
-  ];
-
-  const COLORS = ["#28a745", "#dc3545"]; // Green for income, red for expense
+  // Calculate total expense
+  const totalExpense = transactions
+    .filter((txn) => txn.type === "expense")
+    .reduce((acc, txn) => acc + txn.amount, 0);
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
-      <PieChart>
-        <Pie
-          data={data}
-          dataKey="value"
-          nameKey="name"
-          cx="50%"
-          cy="50%"
-          outerRadius={100}
-          fill="#8884d8"
-          label={({ name, value }) => `${name}: $${value.toFixed(2)}`}
-        >
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Pie>
-        <Tooltip
-          content={({ active, payload }) => {
-            if (active && payload && payload.length) {
-              const { name, value } = payload[0].payload;
-              return (
-                <div className="bg-white p-2 shadow-lg rounded-md text-center">
-                  <p className="font-semibold">{name}: ${value.toFixed(2)}</p>
-                </div>
-              );
-            }
-            return null;
-          }}
-        />
-      </PieChart>
-    </ResponsiveContainer>
+    <div className="flex flex-col items-center space-y-4">
+      <ResponsiveContainer width="100%" height={300}>
+        <PieChart>
+          <Pie
+            data={groupedData}
+            dataKey="value"
+            nameKey="name"
+            cx="50%"
+            cy="50%"
+            outerRadius={100}
+            fill="#8884d8"
+            label={({ name, value }) => `${name}: $${value.toFixed(2)}`}
+          >
+            {groupedData.map((entry, index) => {
+              const colors =
+                entry.type === "income" ? COLORS_INCOME : COLORS_EXPENSE;
+              return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />;
+            })}
+          </Pie>
+          <Tooltip
+            content={({ active, payload }) => {
+              if (active && payload && payload.length) {
+                const { name, value } = payload[0].payload;
+                return (
+                  <div className="bg-white p-2 shadow-lg rounded-md text-center">
+                    <p className="font-semibold">{name}: ${value.toFixed(2)}</p>
+                  </div>
+                );
+              }
+              return null;
+            }}
+          />
+        </PieChart>
+      </ResponsiveContainer>
+      <div className="text-center text-gray-800">
+        <p className="font-bold text-lg">Total Expense: ${totalExpense.toFixed(2)}</p>
+      </div>
+    </div>
   );
 };
 
